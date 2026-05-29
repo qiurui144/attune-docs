@@ -1,0 +1,70 @@
+name: sync-from-source
+
+# 第一跳:从 attune code 仓(public)拉 docs/wiki/ 刷新本仓 wiki/。
+#
+# 完整 wiki 刷新链(用户 2026-05-29「项目保留自己的 doc,定期抽出刷新 wiki」):
+#   attune docs/wiki(SSOT)
+#     → [本 workflow] 拉进 attune-docs wiki/
+#     → 本仓 dispatch.yml 通知 wiki-portal
+#     → wiki-portal wiki-sync.yml 拉本仓 submodule
+#     → wiki-deploy 重建
+#
+# 凭证:attune 是 public,匿名 clone;本仓自 commit 用 GITHUB_TOKEN。无需 PAT。
+# (commit 落到 main 会触发本仓已有的 dispatch.yml → 通知 wiki-portal。)
+on:
+  schedule:
+    - cron: '0 17 * * *'   # 每日 17:00 UTC(01:00 北京),早于 wiki-portal wiki-sync(18:00 UTC)
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '手动触发原因(可选)'
+        required: false
+        default: 'manual docs sync from attune'
+  repository_dispatch:
+    types: [source-updated]   # attune 仓 docs/wiki 变更可主动触发(可选加速,需 attune 侧 dispatch token)
+
+concurrency:
+  group: sync-from-source
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Refresh wiki/ from attune docs/wiki
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout attune-docs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Pull docs/wiki from attune (public, anonymous, sparse)
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          git clone --depth 1 --filter=blob:none --sparse \
+            https://github.com/qiurui144/attune.git "$tmp/src"
+          git -C "$tmp/src" sparse-checkout set docs/wiki
+          if [ ! -d "$tmp/src/docs/wiki" ]; then
+            echo "::error::attune docs/wiki 不存在,源结构有变"; exit 1
+          fi
+          # 镜像 docs/wiki/ → wiki/(--delete 同步删除);只动 wiki/,根 wiki.yaml 保留
+          rsync -a --delete "$tmp/src/docs/wiki/" wiki/
+          rm -rf "$tmp"
+
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain wiki/)" ]; then
+            echo "wiki/ 无变更 — 跳过 commit(下游 dispatch 不触发)。"
+            exit 0
+          fi
+          git config user.name "docs-sync-bot"
+          git config user.email "docs-sync@engi-stack.com"
+          git add wiki/
+          git commit -m "chore(sync): refresh wiki/ from attune docs/wiki ($(date -u +%Y-%m-%dT%H:%MZ))"
+          git push
+          echo "wiki/ 已刷新并 push → 触发本仓 dispatch.yml 通知 wiki-portal。"
