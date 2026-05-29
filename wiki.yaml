@@ -1,0 +1,40 @@
+# attune-docs / wiki.yaml — Pattern A.5 接入清单
+#
+# 由 wiki-portal `scripts/load-projects.ts` 读取，自动注入 docusaurus
+# plugins[] + navbar items[]。新增/调整字段无需改 wiki-portal 代码。
+#
+# Schema 见 wiki-portal `docs/INTEGRATION-GUIDE.md §Pattern A.5`。
+#
+# 本仓为 Attune 公开 docs 仓（Pattern E 独立 docs 仓），作为 git submodule
+# 挂载在 wiki-portal 的 external/attune/。docs SSOT 在本仓，不在产品代码仓。
+
+project_id: attune
+display_name: Attune
+tagline: "个人知识库 + 记忆增强系统（本地优先 / 隐私 / 混合智能）"
+sidebar_section: product
+order: 10
+external_url: https://github.com/qiurui144/attune-docs
+maturity: stable
+
+# Markdown 根目录（相对本 yaml 所在的项目目录，wiki-portal 会拼成
+# external/attune/wiki 作为 docusaurus plugin path）。
+doc_path: wiki
+
+# Sidebar 树 —— doc id（文件名不含 .md，子目录用 "dir/name" 形式）按显示顺序排列。
+sidebar:
+  - index
+  - quickstart
+  - wizard
+  - chat
+  - llm-setup
+  - plugins
+  - agents
+  - sources/index
+  - sources/local-files
+  - sources/email
+  - sources/rss
+  - sources/webdav
+  - architecture
+  - benchmarks
+  - privacy
+  - faq
