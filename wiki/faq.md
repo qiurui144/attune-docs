@@ -5,7 +5,7 @@
 ### Q: 装哪个版本？
 - **个人通用用户**：装 [Attune OSS (Apache-2.0)](https://github.com/qiurui144/attune/releases) 即可
 - **律师 / 医生 / 学者 / 售前**：在 OSS 基础上，再装 [Attune Pro Plugin Pack](/plans/attune-pricing)
-- **律所 B2B（多人/多租户/RBAC）**：用 Attune Enterprise
+- **律所 B2B（多人/多租户/RBAC）**：用 LawControl
 
 ### Q: 必须装 Ollama 吗？
 不必须。Attune 也能用云端 API（OpenAI / Anthropic / 阿里通义等）。但装 Ollama + bge-m3 + qwen2.5:3b 后体验最好（embedding 全本地、LLM 可本地可云）。

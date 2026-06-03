@@ -17,12 +17,12 @@ Attune 是一个**私有知识库 + 记忆增强系统**：
 |------|------|--------|---------|
 | **Attune (OSS)** | 桌面 / Chrome 扩展 | 个人通用用户 | Apache-2.0 |
 | **Attune Pro** | Plugin pack 装载到 Attune | 个人行业用户（律师/医生/学者/售前/工程师/专利代理）| 商业（订阅）|
-| **Attune Enterprise** | Django + Vue + 19 容器 SaaS | 律所 / 小团队 B2B | 商业（License）|
+| **LawControl** | Django + Vue + 19 容器 SaaS | 律所 / 小团队 B2B | 商业（License）|
 
 **等式**：
 - 个人通用用户 = Attune (OSS)
 - 个人行业用户 = Attune (OSS) + Attune-Pro/<vertical>-pro
-- 行业小团队 = Attune Enterprise
+- 行业小团队 = LawControl
 
 ## v1.0 亮点
 
